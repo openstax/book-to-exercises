@@ -1,0 +1,6 @@
+
+<%= form_with(url: book_versions_path, method: :post) do %>
+  <%= label_tag(:id, "Book version ID (uuid@version):") %>
+  <%= text_field_tag(:id) %>
+  <%= submit_tag("Enqueue") %>
+<% end %>

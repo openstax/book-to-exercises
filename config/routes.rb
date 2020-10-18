@@ -1,3 +1,11 @@
 Rails.application.routes.draw do
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+
+  # post 'book_versions/:id', to: 'book_versions#create', as: :scrape_book_version
+
+  resources :book_versions, only: [:create]
+
+  resources :books, only: [:index, :show]
+
+  get 'manual', to: 'manual#index'
+
 end

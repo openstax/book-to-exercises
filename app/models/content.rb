@@ -1,8 +1,15 @@
-require 'net/http'
 require 'json'
 
 class Content
+  include DataStorable
+
+  attr_reader :id
+
+  ID_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}@\d+(\.\d+)?$/
+
   def initialize(id)
+    raise "Content cannot have a nil `id`" if id.nil?
+    raise "ID '#{id}' must be of the form UUID@version" unless id.match(ID_REGEX)
     @id = id
   end
 
@@ -13,15 +20,19 @@ class Content
   def json
     @json ||= begin
       uri = URI(url + ".json")
-      response = Net::HTTP.get(uri)
-      JSON.parse(response)
+      response = HTTParty.get(uri)
+      JSON.parse(response.body)
     end
   end
 
   def html
     @html ||= begin
       uri = URI(url + ".html")
-      Net::HTTP.get(uri)
+      HTTParty.get(uri).body
     end
+  end
+
+  def exists?
+    HTTParty.head(url + ".json").success?
   end
 end
